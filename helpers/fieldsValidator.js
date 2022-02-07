@@ -1,48 +1,34 @@
-function validateDoctorFields(data) {
-  const { doctorAccount, qualification, address, availability, verified } =
-    data;
+const { getObjectProperties } = require("../utils/getObjectProperties");
 
-  const bodyFields = Object.getOwnPropertyNames(data);
+function validateDoctorFields(data) {
+  const suppliedProperties = getObjectProperties(data);
 
   const validFields = [
     "doctorAccount",
     "qualification",
-    "address",
+    "clinics",
+    "name",
+    "location",
     "city",
     "town",
     "neighbourhood",
     "street",
     "availability",
+    "day",
+    "time",
     "from",
     "till",
+    "profilePicture",
+    "certificate",
+    "currentStatus",
     "verified",
   ];
 
   let isValid = true;
 
-  bodyFields.forEach((item) => {
+  suppliedProperties.forEach((item) => {
     if (!validFields.includes(item)) {
       isValid = false;
-    }
-
-    if (item === "address") {
-      const addressFields = Object.getOwnPropertyNames(address);
-      addressFields.forEach((item) => {
-        if (!validFields.includes(item)) {
-          isValid = false;
-        }
-      });
-    }
-
-    if (item === "availability") {
-      availability.forEach((elem) => {
-        const timeFields = Object.getOwnPropertyNames(elem);
-        timeFields.forEach((field) => {
-          if (!validFields.includes(field)) {
-            isValid = false;
-          }
-        });
-      });
     }
   });
 

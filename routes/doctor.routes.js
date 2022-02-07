@@ -53,8 +53,15 @@ router.get("/getOne", async (req, res) => {
 });
 
 router.post("/add-doctor", async (req, res) => {
-  const { doctorAccount, qualification, address, availability, verified } =
-    req.body;
+  const {
+    doctorAccount,
+    qualification,
+    clinics,
+    profilePicture,
+    certificate,
+    currentStatus,
+    verified,
+  } = req.body;
 
   const userExists = await User.findOne({ email: doctorAccount });
 
@@ -87,8 +94,10 @@ router.post("/add-doctor", async (req, res) => {
   let newDoctor = new Doctor({
     doctorAccount: doctorId,
     qualification,
-    address,
-    availability,
+    clinics,
+    profilePicture,
+    certificate,
+    currentStatus,
     verified,
   });
 
@@ -138,17 +147,21 @@ router.put("/update-doctor/:id", async (req, res) => {
     const isValid = validateDoctorFields(req.body);
 
     if (isValid) {
-      let { qualification, address, availability, verified } = req.body;
-
-      address = {
-        ...doctorExists.address,
-        ...address,
-      };
+      let {
+        qualification,
+        clinics,
+        profilePicture,
+        certificate,
+        currentStatus,
+        verified,
+      } = req.body;
 
       const updateObject = {
         qualification,
-        address,
-        availability,
+        clinics,
+        profilePicture,
+        certificate,
+        currentStatus,
         verified,
       };
 

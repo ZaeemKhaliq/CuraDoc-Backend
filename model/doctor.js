@@ -16,31 +16,53 @@ const doctorSchema = new mongoose.Schema({
       message: `{VALUE} is not supported. Accepted values are: MBBS, BDS, MM, MD, BAMS`,
     },
   },
-  address: {
-    city: {
-      type: String,
-    },
-    town: {
-      type: String,
-    },
-    neighbourhood: {
-      type: String,
-    },
-    street: {
-      type: String,
-    },
-  },
-  availability: [
+  clinics: [
     {
-      from: {
+      name: {
         type: String,
       },
-      till: {
-        type: String,
+      location: {
+        city: {
+          type: String,
+        },
+        town: {
+          type: String,
+        },
+        neighbourhood: {
+          type: String,
+        },
+        street: {
+          type: String,
+        },
       },
+      availability: [
+        {
+          day: {
+            type: String,
+          },
+          time: {
+            from: {
+              type: String,
+            },
+            till: {
+              type: String,
+            },
+          },
+          _id: false,
+        },
+      ],
       _id: false,
     },
   ],
+  profilePicture: {
+    type: String,
+  },
+  certificate: {
+    type: String,
+  },
+  currentStatus: {
+    type: String,
+  },
   verified: {
     type: Boolean,
     required: true,
