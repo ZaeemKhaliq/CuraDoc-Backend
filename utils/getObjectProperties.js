@@ -1,6 +1,6 @@
 // Recursive solution for getting all the keys in an object, including of deeply nested objects and objects inside arrays
-function getObjectProperties(object, props) {
-  let properties = props || [];
+function getObjectProperties(object) {
+  let properties = [];
 
   for (const property in object) {
     properties.push(property);
@@ -19,8 +19,8 @@ function getObjectProperties(object, props) {
   return properties;
 }
 
-const iterateOverArray = (array, props) => {
-  let properties = props || [];
+const iterateOverArray = (array) => {
+  let properties = [];
 
   for (var i = 0; i < array.length; i++) {
     if (typeof array[i] === "object" && !array[i].length) {
@@ -30,7 +30,7 @@ const iterateOverArray = (array, props) => {
     }
 
     if (typeof array[i] === "object" && array[i].length > 0) {
-      let tempArray = iterateOverArray(array[i], properties);
+      let tempArray = iterateOverArray(array[i]);
       properties = [...properties, ...tempArray];
     }
   }
