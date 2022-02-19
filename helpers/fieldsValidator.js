@@ -1,11 +1,13 @@
 const { getObjectProperties } = require("../utils/getObjectProperties");
 
-function validateDoctorFields(data) {
+function validateDoctorFields(data, flag) {
   const suppliedProperties = getObjectProperties(data);
 
   const validFields = [
     "doctorAccount",
+    "professionalDetails",
     "qualification",
+    "certificate",
     "clinics",
     "name",
     "location",
@@ -18,8 +20,11 @@ function validateDoctorFields(data) {
     "time",
     "from",
     "till",
+    "personalDetails",
     "profilePicture",
-    "certificate",
+    "dateOfBirth",
+    "cnicNum",
+    "phoneNum",
     "currentStatus",
     "verified",
   ];
@@ -27,7 +32,8 @@ function validateDoctorFields(data) {
   let isValid = true;
 
   suppliedProperties.forEach((item) => {
-    if (!validFields.includes(item)) {
+    // For updating, 'doctorAccount' is not required, so we start from 1 index
+    if (!validFields.includes(item, flag === "add" ? 0 : 1)) {
       isValid = false;
     }
   });

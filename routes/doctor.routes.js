@@ -53,22 +53,14 @@ router.get("/getOne", async (req, res) => {
 });
 
 router.post("/add-doctor", async (req, res) => {
-  const {
-    doctorAccount,
-    qualification,
-    clinics,
-    profilePicture,
-    certificate,
-    currentStatus,
-    verified,
-  } = req.body;
+  const { doctorAccount, ...body } = req.body;
 
   const userExists = await User.findOne({ email: doctorAccount });
 
   if (!userExists) {
     return res.status(404).send({
       message:
-        "Can't add a doctor! No account with this email was found in our records!",
+        "Can't add as a doctor! No user account with this email was found in our records! ",
     });
   }
 
@@ -82,7 +74,7 @@ router.post("/add-doctor", async (req, res) => {
 
   let doctorId = userExists.id;
 
-  const isValid = validateDoctorFields(req.body);
+  const isValid = validateDoctorFields(req.body, "add");
 
   if (!isValid) {
     return res.status(400).send({
@@ -93,12 +85,7 @@ router.post("/add-doctor", async (req, res) => {
 
   let newDoctor = new Doctor({
     doctorAccount: doctorId,
-    qualification,
-    clinics,
-    profilePicture,
-    certificate,
-    currentStatus,
-    verified,
+    ...body,
   });
 
   try {
@@ -144,31 +131,18 @@ router.put("/update-doctor/:id", async (req, res) => {
         .send({ message: "Doctor with this ID not found!" });
     }
 
-    const isValid = validateDoctorFields(req.body);
+    const isValid = validateDoctorFields(req.body, "update");
 
     if (isValid) {
-      let {
-        qualification,
-        clinics,
-        profilePicture,
-        certificate,
-        currentStatus,
-        verified,
-      } = req.body;
+      let { ...body } = req.body;
 
       const updateObject = {
-        qualification,
-        clinics,
-        profilePicture,
-        certificate,
-        currentStatus,
-        verified,
+        ...body,
       };
 
       try {
         const result = await Doctor.findByIdAndUpdate(docId, updateObject, {
           new: true,
-          runValidators: true,
         });
 
         let resp;

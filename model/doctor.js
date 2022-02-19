@@ -7,13 +7,18 @@ const doctorSchema = new mongoose.Schema({
     required: true,
     ref: "user",
   },
-  qualification: {
-    type: String,
-    required: true,
-    uppercase: true,
-    enum: {
-      values: ["MBBS", "BDS", "MM", "MD", "BAMS"],
-      message: `{VALUE} is not supported. Accepted values are: MBBS, BDS, MM, MD, BAMS`,
+  professionalDetails: {
+    qualification: {
+      type: String,
+      required: true,
+      uppercase: true,
+      enum: {
+        values: ["MBBS", "BDS", "MM", "MD", "BAMS"],
+        message: `{VALUE} is not supported. Accepted values are: MBBS, BDS, MM, MD, BAMS`,
+      },
+    },
+    certificate: {
+      type: String,
     },
   },
   clinics: [
@@ -54,18 +59,31 @@ const doctorSchema = new mongoose.Schema({
       _id: false,
     },
   ],
-  profilePicture: {
-    type: String,
+  personalDetails: {
+    profilePicture: {
+      type: String,
+    },
+    dateOfBirth: {
+      type: String,
+    },
+    cnicNum: {
+      type: String,
+    },
+    phoneNum: {
+      type: String,
+    },
   },
-  certificate: {
-    type: String,
-  },
+
   currentStatus: {
     type: String,
+    uppercase: true,
+    enum: {
+      values: ["ONLINE", "OFFLINE"],
+      message: `{VALUE} is not supported. Accepted values are: ONLINE, OFFLINE`,
+    },
   },
   verified: {
     type: Boolean,
-    required: true,
     default: false,
   },
 });

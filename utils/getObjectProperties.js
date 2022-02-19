@@ -1,16 +1,24 @@
 // Recursive solution for getting all the keys in an object, including of deeply nested objects and objects inside arrays
+const isArray = (object) => {
+  return Array.isArray(object);
+};
+
+const isObject = (object) => {
+  return Object.prototype.toString.call(object) === "[object Object]";
+};
+
 function getObjectProperties(object) {
   let properties = [];
 
   for (const property in object) {
     properties.push(property);
 
-    if (object[property].length > 0 && typeof object[property] !== "string") {
+    if (isArray(object[property])) {
       let tempArray = iterateOverArray(object[property]);
       properties = [...properties, ...tempArray];
     }
 
-    if (!object[property].length && typeof object[property] === "object") {
+    if (isObject(object[property])) {
       let tempArray = iterateOverObject(object[property]);
       properties = [...properties, ...tempArray];
     }
@@ -23,15 +31,15 @@ const iterateOverArray = (array) => {
   let properties = [];
 
   for (var i = 0; i < array.length; i++) {
-    if (typeof array[i] === "object" && !array[i].length) {
+    if (isObject(array[i])) {
       let tempArray = iterateOverObject(array[i]);
 
-      properties = [...properties, ...tempArray];
+      properties = [...tempArray];
     }
 
-    if (typeof array[i] === "object" && array[i].length > 0) {
+    if (isArray(array[i])) {
       let tempArray = iterateOverArray(array[i]);
-      properties = [...properties, ...tempArray];
+      properties = [...tempArray];
     }
   }
 
@@ -44,12 +52,12 @@ const iterateOverObject = (object) => {
   for (const property in object) {
     properties.push(property);
 
-    if (typeof object[property] === "object" && !object[property].length) {
+    if (isObject(object[property])) {
       let tempArray = iterateOverObject(object[property]);
       properties = [...properties, ...tempArray];
     }
 
-    if (typeof object[property] === "object" && object[property].length > 0) {
+    if (isArray(object[property])) {
       let tempArray = iterateOverArray(object[property]);
       properties = [...properties, ...tempArray];
     }
