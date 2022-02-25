@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 const { User } = require("./user");
 
+const domainExperienceValues = [
+  ...new Array(12)
+    .fill(0)
+    .map((item, index) => `${index + 1} MONTH${index > 0 ? "S" : ""}`),
+  ...new Array(31)
+    .fill(0)
+    .map(
+      (item, index) =>
+        `${index === 30 ? ">30" : index + 1} YEAR${index > 0 ? "S" : ""}`
+    ),
+];
+
 const doctorSchema = new mongoose.Schema({
   doctorAccount: {
     type: mongoose.Schema.Types.ObjectId,
@@ -10,15 +22,20 @@ const doctorSchema = new mongoose.Schema({
   professionalDetails: {
     qualification: {
       type: String,
-      required: true,
       uppercase: true,
-      enum: {
-        values: ["MBBS", "BDS", "MM", "MD", "BAMS"],
-        message: `{VALUE} is not supported. Accepted values are: MBBS, BDS, MM, MD, BAMS`,
-      },
     },
     certificate: {
       type: String,
+    },
+    domainExperience: {
+      type: String,
+      uppercase: true,
+      enum: {
+        values: [...domainExperienceValues],
+        message: `{VALUE} is not supported. Accepted values are: ${domainExperienceValues.join(
+          ", "
+        )}`,
+      },
     },
   },
   clinics: [
@@ -45,14 +62,26 @@ const doctorSchema = new mongoose.Schema({
           day: {
             type: String,
           },
-          time: {
-            from: {
-              type: String,
+          time: [
+            {
+              from: {
+                type: String,
+              },
+              till: {
+                type: String,
+              },
+              type: {
+                type: String,
+                uppercase: true,
+                enum: {
+                  values: ["ONSITE", "ONLINE", "HOMEVISIT"],
+                  message: `{VALUE} is not supported. Accepted values are: 'ONSITE', 'ONLINE' and 'HOMEVISIT'`,
+                },
+              },
+              _id: false,
             },
-            till: {
-              type: String,
-            },
-          },
+          ],
+
           _id: false,
         },
       ],
