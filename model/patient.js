@@ -1,32 +1,48 @@
 const mongoose = require("mongoose");
 
 const patientSchema = new mongoose.Schema({
-  patient: {
+  patientAccount: {
     type: mongoose.Schema.Types.ObjectId,
-    required: [true, "Patient name is required!"],
+    required: [true, "Patient's account is required!"],
     ref: "user",
   },
-  dateOfBirth: {
-    type: String,
-  },
-  latestAppointment: {
-    date: {
+  personalDetails: {
+    profilePicture: {
       type: String,
     },
-    type: {
+    dateOfBirth: {
       type: String,
     },
-    doctor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "doctor",
+    cnicNum: {
+      type: String,
+    },
+    phoneNum: {
+      type: String,
+    },
+    address: {
+      city: {
+        type: String,
+      },
+      town: {
+        type: String,
+      },
+      neighbourhood: {
+        type: String,
+      },
+      street: {
+        type: String,
+      },
     },
   },
-  numberOfAppointments: {
-    type: Number,
-  },
-  appointmentsHistory: [
+  currentAppointments: [
     {
       date: {
+        type: String,
+      },
+      day: {
+        type: String,
+      },
+      time: {
         type: String,
       },
       type: {
@@ -36,19 +52,59 @@ const patientSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "doctor",
       },
-      status: {
+    },
+  ],
+  numberOfAppointments: {
+    type: Number,
+  },
+  appointmentsHistory: [
+    {
+      date: {
         type: String,
       },
+      day: {
+        type: String,
+      },
+      time: {
+        type: String,
+      },
+      type: {
+        type: String,
+      },
+      doctor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "doctor",
+      },
+      result: {
+        type: String,
+      },
+      doctorAdvice: {
+        type: String,
+      },
+      prescriptions: [
+        {
+          drugName: {
+            type: String,
+          },
+          intake: {
+            type: String,
+          },
+          duration: {
+            type: String,
+          },
+        },
+      ],
     },
   ],
 });
 
-patientSchema.virtual("id").get(function () {
-  return this._id.toHexString();
-});
-
 patientSchema.set("toJSON", {
   virtuals: true,
+  transform(doc, ret) {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
 });
 
 exports.Patient = mongoose.model("patient", patientSchema);
