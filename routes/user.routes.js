@@ -36,7 +36,7 @@ router.post("/register", async (req, res) => {
     let getRole;
 
     try {
-      const roleExists = await Role.findOne({ role: role });
+      const roleExists = await Role.findOne({ name: role });
 
       if (!roleExists) {
         return res.status(404).send({ message: "Role doesn't exists!" });
