@@ -34,68 +34,6 @@ const patientSchema = new mongoose.Schema({
       },
     },
   },
-  currentAppointments: [
-    {
-      date: {
-        type: String,
-      },
-      day: {
-        type: String,
-      },
-      time: {
-        type: String,
-      },
-      type: {
-        type: String,
-      },
-      doctor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "doctor",
-      },
-    },
-  ],
-  numberOfAppointments: {
-    type: Number,
-  },
-  appointmentsHistory: [
-    {
-      date: {
-        type: String,
-      },
-      day: {
-        type: String,
-      },
-      time: {
-        type: String,
-      },
-      type: {
-        type: String,
-      },
-      doctor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "doctor",
-      },
-      result: {
-        type: String,
-      },
-      doctorAdvice: {
-        type: String,
-      },
-      prescriptions: [
-        {
-          drugName: {
-            type: String,
-          },
-          intake: {
-            type: String,
-          },
-          duration: {
-            type: String,
-          },
-        },
-      ],
-    },
-  ],
 });
 
 patientSchema.set("toJSON", {

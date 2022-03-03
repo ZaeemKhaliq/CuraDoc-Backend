@@ -10,7 +10,7 @@ const { Patient } = require("../model/patient");
 const { Role } = require("../model/role");
 
 //API FOR GETTING ALL USERS
-router.get("/getAll", async (req, res) => {
+router.get("/get/all", async (req, res) => {
   try {
     const users = await User.find();
 
@@ -20,7 +20,46 @@ router.get("/getAll", async (req, res) => {
 
     res.status(200).send(users);
   } catch (err) {
-    res.status(500).send({ message: "Server error!", error: err.message });
+    res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: err.message,
+    });
+  }
+});
+
+router.get("/get/by-role", async (req, res) => {
+  const { role } = req.body;
+
+  try {
+    const fetchedRole = await Role.findOne({ name: role });
+
+    if (!fetchedRole) {
+      return res.status(404).send({ message: "Role doesn't exists!" });
+    }
+
+    const roleId = fetchedRole.id;
+
+    try {
+      const users = await User.find({ role: roleId });
+
+      if (!users) {
+        return res
+          .status(404)
+          .send({ message: "No user with this role found!" });
+      }
+
+      return res.status(200).send(users);
+    } catch (error) {
+      return res.status(500).send({
+        message: "Some error occurred while processing request!",
+        error: error.message,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
   }
 });
 
@@ -32,7 +71,9 @@ router.post("/register", async (req, res) => {
     const userExists = await User.findOne({ email: email });
 
     if (userExists) {
-      return res.status(403).send({ message: "User Already Exists!" });
+      return res.status(403).send({
+        message: "Email not available! Try a different Email address",
+      });
     }
 
     let roleObject;
@@ -69,43 +110,76 @@ router.post("/register", async (req, res) => {
           .send({ message: "Some error occurred while creating user!" });
       }
 
-      let newDoctor = new Doctor({
-        doctorAccount: result.id,
-      });
-
-      try {
-        const doctorResult = await newDoctor.save();
-        let finalResp;
+      if (roleObject.name === "Doctor") {
+        let newDoctor = new Doctor({
+          doctorAccount: result.id,
+        });
 
         try {
-          finalResp = await doctorResult.populate({
-            path: "doctorAccount",
-            select: "-password -_id",
-            populate: { path: "role", select: "-_id" },
-          });
-        } catch (error) {
-          finalResp = doctorResult;
-        }
+          const doctorResult = await newDoctor.save();
+          let finalResp;
 
-        return res
-          .status(201)
-          .send({ message: "User added successfully!", user: finalResp });
-      } catch (error) {
-        return res.status(500).send({
-          message:
-            "User added but some error occurred while adding user as a doctor!",
-          error: error.message,
+          try {
+            finalResp = await doctorResult.populate({
+              path: "doctorAccount",
+              select: "-password -_id",
+              populate: { path: "role", select: "-_id" },
+            });
+          } catch (error) {
+            finalResp = doctorResult;
+          }
+
+          return res
+            .status(201)
+            .send({ message: "User added successfully!", user: finalResp });
+        } catch (error) {
+          return res.status(500).send({
+            message:
+              "User added but some error occurred while adding user as a doctor!",
+            error: error.message,
+          });
+        }
+      } else if (roleObject.name === "Patient") {
+        let newPatient = new Patient({
+          patientAccount: result.id,
         });
+
+        try {
+          const patientResult = await newPatient.save();
+          let finalResp;
+
+          try {
+            finalResp = await patientResult.populate({
+              path: "patientAccount",
+              select: "-password -_id",
+              populate: { path: "role", select: "-_id" },
+            });
+          } catch (error) {
+            finalResp = patientResult;
+          }
+
+          return res
+            .status(201)
+            .send({ message: "User added successfully!", user: finalResp });
+        } catch (error) {
+          return res.status(500).send({
+            message:
+              "User added but some error occurred while adding user as a patient!",
+            error: error.message,
+          });
+        }
       }
     } catch (err) {
-      return res
-        .status(500)
-        .send({ message: "Server error!", error: err.message });
+      return res.status(500).send({
+        message: "Some error occurred while processing request!",
+        error: err.message,
+      });
     }
   } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Server error!", error: err.message });
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: err.message,
+    });
   }
 });
 
@@ -149,7 +223,7 @@ router.post("/login", async (req, res) => {
         try {
           const doctorExists = await Doctor.findOne({
             doctorAccount: user.id,
-          }).select("-doctorAccount -_id");
+          }).select("-doctorAccount");
 
           return res.status(200).send({
             ...responseObject,
@@ -159,15 +233,16 @@ router.post("/login", async (req, res) => {
             },
           });
         } catch (error) {
-          return res
-            .status(500)
-            .send({ message: "Some error occurred!", error: error.message });
+          return res.status(500).send({
+            message: "Some error occurred while processing request!",
+            error: error.message,
+          });
         }
       } else if (user.role.name === "Patient") {
         try {
           const patientExists = await Patient.findOne({
             patientAccount: user.id,
-          }).select("-patientAccount -_id");
+          }).select("-patientAccount");
 
           return res.status(200).send({
             ...responseObject,
@@ -177,9 +252,10 @@ router.post("/login", async (req, res) => {
             },
           });
         } catch (error) {
-          return res
-            .status(500)
-            .send({ message: "Some error occurred!", error: error.message });
+          return res.status(500).send({
+            message: "Some error occurred while processing request!",
+            error: error.message,
+          });
         }
       } else if (user.role.name === "Admin") {
         return res.status(200).send({
@@ -193,9 +269,10 @@ router.post("/login", async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .send({ message: "Server error!", error: err.message });
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: err.message,
+    });
   }
 });
 

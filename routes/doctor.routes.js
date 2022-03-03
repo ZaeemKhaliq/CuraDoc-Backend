@@ -7,7 +7,7 @@ const { User } = require("../model/user");
 
 const { validateDoctorFields } = require("../helpers/fieldsValidator");
 
-router.get("/getAll", async (req, res) => {
+router.get("/get/all", async (req, res) => {
   try {
     const doctors = await Doctor.find().populate({
       path: "doctorAccount",
@@ -21,11 +21,14 @@ router.get("/getAll", async (req, res) => {
 
     res.status(200).send(doctors);
   } catch (err) {
-    res.status(500).send({ message: "Server error!", error: err.message });
+    res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: err.message,
+    });
   }
 });
 
-router.get("/getOne", async (req, res) => {
+router.get("/get/one", async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -37,7 +40,7 @@ router.get("/getOne", async (req, res) => {
   Doctor.findByEmail(email, function (err, doctor) {
     if (err) {
       return res.status(500).send({
-        message: "Some error occurred!",
+        message: "Some error occurred while processing request!",
         error: err.message,
       });
     }
@@ -109,14 +112,15 @@ router.post("/add-doctor", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .send({ message: "Some error occured!", error: error.message });
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
   }
 });
 
 router.put("/update-doctor/:id", async (req, res) => {
-  let docId = req.params.id;
+  const { id: docId } = req.params;
 
   if (!mongoose.isValidObjectId(docId)) {
     return res.status(400).send({ message: "Invalid Doctor ID!" });
@@ -134,7 +138,7 @@ router.put("/update-doctor/:id", async (req, res) => {
     const isValid = validateDoctorFields(req.body, "update");
 
     if (isValid) {
-      let { ...body } = req.body;
+      let { body } = req;
 
       const updateObject = {
         ...body,
@@ -162,9 +166,10 @@ router.put("/update-doctor/:id", async (req, res) => {
           updatedDoctor: resp,
         });
       } catch (error) {
-        return res
-          .status(500)
-          .send({ message: "Some error occurred!", error: error.message });
+        return res.status(500).send({
+          message: "Some error occurred while processing request!",
+          error: error.message,
+        });
       }
     } else {
       return res.status(400).send({
@@ -173,14 +178,15 @@ router.put("/update-doctor/:id", async (req, res) => {
       });
     }
   } catch (error) {
-    return res
-      .status(500)
-      .send({ message: "Some error occurred!", error: error.message });
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
   }
 });
 
 router.delete("/remove-doctor/:id", async (req, res) => {
-  let docId = req.params.id;
+  const docId = req.params.id;
 
   if (!mongoose.isValidObjectId(docId)) {
     return res.status(400).send({ message: "Invalid object ID!" });
@@ -210,9 +216,10 @@ router.delete("/remove-doctor/:id", async (req, res) => {
       .status(200)
       .send({ message: "Doctor removed successfully!", removedDoctor: resp });
   } catch (error) {
-    return res
-      .status(500)
-      .send({ message: "Some error occurred!", error: error.message });
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
   }
 });
 
