@@ -27,6 +27,7 @@ router.get("/get/all", async (req, res) => {
   }
 });
 
+// API FOR GETTING USERS BY ROLE
 router.get("/get/by-role", async (req, res) => {
   const { role } = req.body;
 
@@ -61,6 +62,32 @@ router.get("/get/by-role", async (req, res) => {
       error: error.message,
     });
   }
+});
+
+// API FOR GETTING SINGLE USER BY HIS/HER EMAIL
+router.get("/get/by-email", async (req, res) => {
+  const { email } = req.query;
+  if (!email) {
+    return res.status(400).send({
+      message:
+        "'email' parameter not found in request! Try making request like this: /get/by-email?email=<your_email>",
+    });
+  }
+
+  const user = await User.findOne({ email: email })
+    .select("-password")
+    .populate({
+      path: "role",
+      select: "name -_id",
+    });
+
+  if (!user) {
+    return res
+      .status(404)
+      .send({ message: "No user with given email found in records!" });
+  }
+
+  return res.status(200).send(user);
 });
 
 //USER REGISTRATION API
@@ -187,7 +214,10 @@ router.post("/login", async (req, res) => {
   let { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email: email }).populate("role");
+    const user = await User.findOne({ email: email }).populate({
+      path: "role",
+      select: "name -_id",
+    });
 
     if (!user) {
       return res
@@ -201,7 +231,7 @@ router.post("/login", async (req, res) => {
       const token = jwt.sign(
         {
           userId: user.id,
-          role: user.role,
+          role: user.role.name,
         },
         SECRET_KEY,
         {

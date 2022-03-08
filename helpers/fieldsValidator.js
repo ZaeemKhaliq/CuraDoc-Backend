@@ -27,15 +27,29 @@ function validateDoctorFields(data, flag) {
     "dateOfBirth",
     "cnicNum",
     "phoneNum",
+    "introduction",
     "currentStatus",
     "verified",
   ];
 
   let isValid = true;
+  const validFieldsForUpdate = validFields.slice(1, validFields.length - 1);
+  const validFieldsForVerify = validFields.slice(validFields.length - 1);
 
   suppliedProperties.forEach((item) => {
-    // For updating, 'doctorAccount' is not required, so we start from 1 index
-    if (!validFields.includes(item, flag === "add" ? 0 : 1)) {
+    if (flag === "add") {
+      if (!validFields.includes(item)) {
+        isValid = false;
+      }
+    } else if (flag === "update") {
+      if (!validFieldsForUpdate.includes(item)) {
+        isValid = false;
+      }
+    } else if (flag === "verify") {
+      if (!validFieldsForVerify.includes(item)) {
+        isValid = false;
+      }
+    } else {
       isValid = false;
     }
   });
@@ -107,15 +121,16 @@ function validateAppointmentFields(data, flag) {
     "duration",
   ];
 
+  const validFieldsForAdd = validFields.slice(0, 6);
   let isValid = true;
 
   suppliedProperties.forEach((item) => {
     if (flag === "add") {
-      if (!validFields.includes(item)) {
+      if (!validFieldsForAdd.includes(item)) {
         isValid = false;
       }
     } else if (flag === "update") {
-      if (!validFields.includes(item, 1)) {
+      if (!validFields.includes(item, 2)) {
         isValid = false;
       }
     } else {

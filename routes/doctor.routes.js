@@ -147,23 +147,11 @@ router.put("/update-doctor/:id", async (req, res) => {
       try {
         const result = await Doctor.findByIdAndUpdate(docId, updateObject, {
           new: true,
-        });
-
-        let resp;
-
-        try {
-          resp = await result.populate({
-            path: "doctorAccount",
-            select: "-password -_id",
-            populate: { path: "role", select: "-_id" },
-          });
-        } catch (error) {
-          resp = result;
-        }
+        }).select("-doctorAccount");
 
         return res.status(201).send({
           message: "Doctor updated successfully!",
-          updatedDoctor: resp,
+          updatedDoctor: result,
         });
       } catch (error) {
         return res.status(500).send({
@@ -175,6 +163,57 @@ router.put("/update-doctor/:id", async (req, res) => {
       return res.status(400).send({
         message:
           "Request declined! Some or all properties in the 'body' are invalid or not supported!",
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
+  }
+});
+
+router.put("/verify-doctor/:id", async (req, res) => {
+  const { id: doctorId } = req.params;
+
+  if (!mongoose.isValidObjectId(doctorId)) {
+    return res.status(400).send({ message: "Invalid Doctor ID!" });
+  }
+
+  try {
+    const doctorExists = await Doctor.findById(doctorId);
+
+    if (!doctorExists) {
+      return res
+        .status(404)
+        .send({ message: "Doctor with this ID not found!" });
+    }
+
+    const isValid = validateDoctorFields(req.body, "verify");
+
+    if (!isValid) {
+      return res.status(400).send({
+        message:
+          "Request declined! Some or all properties in the 'body' are invalid or not supported!",
+      });
+    }
+
+    const updateObject = {
+      ...req.body,
+    };
+
+    try {
+      const result = await Doctor.findByIdAndUpdate(doctorId, updateObject, {
+        new: true,
+      });
+
+      return res
+        .status(201)
+        .send({ message: "Doctor verified successfully!", doctor: result });
+    } catch (error) {
+      return res.status(500).send({
+        message: "Some error occurred while processing request!",
+        error: error.message,
       });
     }
   } catch (error) {

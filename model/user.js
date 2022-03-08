@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: "role",
   },
   email: {

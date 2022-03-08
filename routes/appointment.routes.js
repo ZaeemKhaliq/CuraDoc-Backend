@@ -28,14 +28,46 @@ router.get("/get/all", async (req, res) => {
   }
 });
 
-router.get("/get/patient/:id", async (req, res) => {
+router.get("/get/one/:id", async (req, res) => {
+  const { id: appointmentId } = req.params;
+
+  if (!mongoose.isValidObjectId(appointmentId)) {
+    return res.status(400).send({ message: "Invalid Appointment ID!" });
+  }
+
+  try {
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      return res
+        .status(404)
+        .send({ message: "No appointment with given ID found!" });
+    }
+
+    return res.status(200).send(appointment);
+  } catch (error) {
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
+  }
+});
+
+// APPOINTMENTS OF A PATIENT
+router.get("/get/by-patientId/:id", async (req, res) => {
   const { id: patientId } = req.params;
+
+  if (!mongoose.isValidObjectId(patientId)) {
+    return res.status(400).send({ message: "Invalid Appointment ID!" });
+  }
 
   try {
     const appointments = await Appointment.find({ patient: patientId });
 
     if (!appointments) {
-      return res.status(404).send({ message: "No appointments in records!" });
+      return res
+        .status(404)
+        .send({ message: "No appointments with given ID found in records!" });
     }
 
     return res.status(200).send(appointments);
@@ -47,14 +79,21 @@ router.get("/get/patient/:id", async (req, res) => {
   }
 });
 
-router.get("/get/doctor/:id", async (req, res) => {
+// APPOINTMENTS OF A DOCTOR
+router.get("/get/by-doctorId/:id", async (req, res) => {
   const { id: doctorId } = req.params;
+
+  if (!mongoose.isValidObjectId(doctorId)) {
+    return res.status(400).send({ message: "Invalid Appointment ID!" });
+  }
 
   try {
     const appointments = await Appointment.find({ doctor: doctorId });
 
     if (!appointments) {
-      return res.status(404).send({ message: "No appointments in records!" });
+      return res
+        .status(404)
+        .send({ message: "No appointments with given ID found in records!" });
     }
 
     return res.status(200).send(appointments);
@@ -66,6 +105,7 @@ router.get("/get/doctor/:id", async (req, res) => {
   }
 });
 
+// ADD APPOINTMENT API
 router.post("/add-appointment", async (req, res) => {
   const { body } = req;
 
@@ -118,7 +158,7 @@ router.post("/add-appointment", async (req, res) => {
       resp = result;
     }
 
-    return res.status(200).send({
+    return res.status(201).send({
       message: "Appointment added successfully!",
       addedAppointment: resp,
     });
@@ -130,6 +170,7 @@ router.post("/add-appointment", async (req, res) => {
   }
 });
 
+// UPDATE APPOINTMENT API
 router.put("/update-appointment/:id", async (req, res) => {
   const { id: appointmentId } = req.params;
   const { body } = req;
@@ -208,6 +249,7 @@ router.put("/update-appointment/:id", async (req, res) => {
   }
 });
 
+// UPDATE APPOINTMENT'S CONVERSATION API
 router.put("/update-appointment/conversation/:id", async (req, res) => {
   const { id: appointmentId } = req.params;
   const { body } = req;
@@ -226,15 +268,21 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
     }
 
     const author = body.conversation[0].author;
+    let role;
+    let authorExists;
 
     try {
-      let authorExists = await Patient.findById(author).select(
-        "patientAccount -_id"
-      );
+      authorExists = await Patient.findById(author)
+        .select("patientAccount")
+        .populate({
+          path: "patientAccount",
+          select: "role -_id",
+          populate: { path: "role", select: "name -_id" },
+        });
 
       if (!authorExists) {
         authorExists = await Doctor.findById(author)
-          .select("doctorAccount -_id")
+          .select("doctorAccount")
           .populate({
             path: "doctorAccount",
             select: "role -_id",
@@ -245,6 +293,25 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
           return res
             .status(400)
             .send({ message: "No author with given ID exists!" });
+        }
+
+        role = authorExists.doctorAccount.role.name;
+      } else {
+        role = authorExists.patientAccount.role.name;
+      }
+
+      if (role.toLowerCase() === "patient") {
+        if (author !== String(appointmentExists.patient)) {
+          return res.status(400).send({
+            message:
+              "The patient ID given does not belong to this appointment!",
+          });
+        }
+      } else if (role.toLowerCase() === "doctor") {
+        if (author !== String(appointmentExists.doctor)) {
+          return res.status(400).send({
+            message: "The doctor ID given does not belong to this appointment!",
+          });
         }
       }
     } catch (error) {

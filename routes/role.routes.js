@@ -21,13 +21,13 @@ router.get("/get/all", async (req, res) => {
   }
 });
 
-router.get("/get/ane", async (req, res) => {
+router.get("/get/one", async (req, res) => {
   let { role } = req.query;
 
   if (!role) {
     return res.status(400).send({
       message:
-        "'role' parameter not found in request! Try making request like this: /getOne?role=<role>",
+        "'role' parameter not found in request! Try making request like this: /get/one?role=<your_role>",
     });
   }
 

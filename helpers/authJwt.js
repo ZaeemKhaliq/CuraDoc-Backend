@@ -7,9 +7,26 @@ function authJwt() {
   return expressJwt({
     secret,
     algorithms: ["HS256"],
+    isRevoked,
   }).unless({
     path: [`${API_URL}/users/login`, `${API_URL}/users/register`],
   });
+}
+
+async function isRevoked(req, payload, done) {
+  const { path } = req;
+
+  if (
+    /\/api\/v1\/users\/get.*/.test(path) ||
+    /\/api\/v1\/roles\/get.*/.test(path) ||
+    /\/api\/v1\/doctors\/verify-doctor.*/.test(path)
+  ) {
+    if (payload.role !== "Admin") {
+      done(null, true);
+    }
+  }
+
+  done();
 }
 
 module.exports = authJwt;

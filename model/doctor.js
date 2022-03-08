@@ -37,6 +37,9 @@ const doctorSchema = new mongoose.Schema({
         )}`,
       },
     },
+    introduction: {
+      type: String,
+    },
   },
   clinics: [
     {
