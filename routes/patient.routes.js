@@ -50,7 +50,7 @@ router.put("/update-patient/:id", async (req, res) => {
   }
 
   try {
-    const patientExists = await Doctor.findById(patientId);
+    const patientExists = await Patient.findById(patientId);
 
     if (!patientExists) {
       return res
