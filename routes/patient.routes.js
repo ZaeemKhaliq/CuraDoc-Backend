@@ -98,6 +98,11 @@ router.put("/update-patient/:id", async (req, res) => {
           error: error.message,
         });
       }
+    } else {
+      return res.status(400).send({
+        message:
+          "Request declined! Some or all properties in the 'body' are invalid or not supported!",
+      });
     }
   } catch (error) {
     return res.status(500).send({

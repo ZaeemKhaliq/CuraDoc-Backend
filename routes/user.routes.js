@@ -9,6 +9,8 @@ const { Doctor } = require("../model/doctor");
 const { Patient } = require("../model/patient");
 const { Role } = require("../model/role");
 
+const { validateUserFields } = require("../helpers/fieldsValidator");
+
 //API FOR GETTING ALL USERS
 router.get("/get/all", async (req, res) => {
   try {
@@ -210,6 +212,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// USER LOGIN API
 router.post("/login", async (req, res) => {
   let { email, password } = req.body;
 
@@ -302,6 +305,75 @@ router.post("/login", async (req, res) => {
     return res.status(500).send({
       message: "Some error occurred while processing request!",
       error: err.message,
+    });
+  }
+});
+
+// USER NAME UPDATE API
+router.put("/update-user/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  if (!mongoose.isValidObjectId(userId)) {
+    return res.status(400).send({ message: "Invalid User ID!" });
+  }
+
+  try {
+    const userExists = await User.findById(userId);
+
+    if (!userExists) {
+      return res.status(404).send({ message: "User with this ID not found!" });
+    }
+
+    const isValid = validateUserFields(req.body);
+
+    if (!isValid) {
+      return res.status(400).send({
+        message:
+          "Request declined! Some or all properties in the 'body' are invalid or not supported!",
+      });
+    }
+
+    const updateObject = {
+      ...req.body,
+    };
+
+    try {
+      const result = await User.findByIdAndUpdate(userId, updateObject, {
+        new: true,
+      }).select("-password");
+
+      let resp;
+
+      try {
+        resp = await result.populate({
+          path: "role",
+          select: "name -_id",
+        });
+      } catch (error) {
+        resp = result;
+      }
+
+      return res.status(201).send({
+        message: "User updated successfully!",
+        updatedUser: {
+          name: resp.name,
+          role: {
+            name: resp.role.name,
+          },
+          email: resp.email,
+          userId: resp.id,
+        },
+      });
+    } catch (error) {
+      return res.status(500).send({
+        message: "Some error occurred while processing request!",
+        error: error.message,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
     });
   }
 });
