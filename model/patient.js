@@ -20,18 +20,7 @@ const patientSchema = new mongoose.Schema({
       type: String,
     },
     address: {
-      city: {
-        type: String,
-      },
-      town: {
-        type: String,
-      },
-      neighbourhood: {
-        type: String,
-      },
-      street: {
-        type: String,
-      },
+      type: String,
     },
   },
 });

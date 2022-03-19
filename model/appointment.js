@@ -29,6 +29,9 @@ const conversationSchema = new mongoose.Schema(
 
 const appointmentSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+    },
     patient: {
       type: mongoose.Schema.Types.ObjectId,
       required: [true, "Patient's account is required to save appointment"],

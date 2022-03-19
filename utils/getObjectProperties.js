@@ -1,4 +1,4 @@
-// Recursive solution for getting all the keys in an object, including of deeply nested objects and objects inside arrays
+// Recursive approach for getting all the keys in an object, including of deeply nested objects and objects inside arrays
 const isArray = (object) => {
   return Array.isArray(object);
 };

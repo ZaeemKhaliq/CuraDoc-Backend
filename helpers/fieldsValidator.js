@@ -103,6 +103,7 @@ function validateAppointmentFields(data, flag) {
     "patientMatter",
     "appointmentType",
     "patientAddress",
+    "name",
     "responseDetails",
     "accepted",
     "message",
