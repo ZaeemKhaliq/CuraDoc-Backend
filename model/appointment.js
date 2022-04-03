@@ -59,7 +59,7 @@ const appointmentSchema = new mongoose.Schema(
       },
     },
     responseDetails: {
-      accepted: {
+      isAccepted: {
         type: Boolean,
       },
       message: {
@@ -83,10 +83,10 @@ const appointmentSchema = new mongoose.Schema(
         },
       },
     },
-    active: {
+    isActive: {
       type: Boolean,
     },
-    completed: {
+    isCompleted: {
       type: Boolean,
     },
     result: {
