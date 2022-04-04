@@ -11,6 +11,7 @@ router.get("/get/all", async (req, res) => {
   try {
     const doctors = await Doctor.find().populate({
       path: "doctorAccount",
+      select: "-_id",
       populate: { path: "role", select: "-_id" },
     });
 
