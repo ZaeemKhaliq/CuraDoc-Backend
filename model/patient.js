@@ -23,6 +23,12 @@ const patientSchema = new mongoose.Schema({
       type: String,
     },
   },
+  appointmentHistory: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "appointment",
+    },
+  ],
 });
 
 patientSchema.set("toJSON", {
