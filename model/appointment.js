@@ -85,9 +85,11 @@ const appointmentSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
+      default: true,
     },
     isCompleted: {
       type: Boolean,
+      default: false,
     },
     result: {
       doctorAdvice: {
