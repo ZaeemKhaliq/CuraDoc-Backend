@@ -62,7 +62,9 @@ router.get("/get/by-patientId/:id", async (req, res) => {
   }
 
   try {
-    const appointments = await Appointment.find({ patient: patientId });
+    const appointments = await Appointment.find({
+      patient: patientId,
+    }).populate([{ path: "patient" }, { path: "doctor" }]);
 
     if (!appointments) {
       return res
@@ -88,7 +90,10 @@ router.get("/get/by-doctorId/:id", async (req, res) => {
   }
 
   try {
-    const appointments = await Appointment.find({ doctor: doctorId });
+    const appointments = await Appointment.find({ doctor: doctorId }).populate([
+      { path: "patient" },
+      { path: "doctor" },
+    ]);
 
     if (!appointments) {
       return res

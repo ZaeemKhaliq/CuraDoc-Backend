@@ -57,6 +57,9 @@ const appointmentSchema = new mongoose.Schema(
       patientAddress: {
         type: String,
       },
+      patientPhoneNum: {
+        type: String,
+      },
     },
     responseDetails: {
       isAccepted: {
