@@ -99,11 +99,12 @@ function validateAppointmentFields(data, flag) {
   const validFields = [
     "patient",
     "doctor",
+    "name",
     "requestDetails",
     "patientMatter",
     "appointmentType",
     "patientAddress",
-    "name",
+    "patientPhoneNum",
     "responseDetails",
     "accepted",
     "message",
@@ -122,7 +123,7 @@ function validateAppointmentFields(data, flag) {
     "duration",
   ];
 
-  const validFieldsForAdd = validFields.slice(0, 6);
+  const validFieldsForAdd = validFields.slice(0, 8);
   let isValid = true;
 
   suppliedProperties.forEach((item) => {
