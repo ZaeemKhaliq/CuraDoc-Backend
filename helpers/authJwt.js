@@ -16,11 +16,13 @@ function authJwt() {
 async function isRevoked(req, payload, done) {
   const { path } = req;
 
-  if (
-    /\/api\/v1\/users\/get.*/.test(path) ||
-    /\/api\/v1\/roles\/get.*/.test(path) ||
-    /\/api\/v1\/doctors\/verify-doctor.*/.test(path)
-  ) {
+  const regEpxsToTest = [
+    /\/api\/v1\/users\/get.*/.test(path),
+    /\/api\/v1\/roles\/get.*/.test(path),
+    /\/api\/v1\/doctors\/verify-doctor.*/.test(path),
+  ];
+
+  if (regEpxsToTest.includes(true)) {
     if (payload.role !== "Admin") {
       done(null, true);
     }

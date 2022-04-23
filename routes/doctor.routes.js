@@ -6,6 +6,7 @@ const { Doctor } = require("../model/doctor");
 const { User } = require("../model/user");
 
 const { validateDoctorFields } = require("../helpers/fieldsValidator");
+const getPaginatedData = require("../utils/getPaginatedData");
 
 router.get("/get/all", async (req, res) => {
   try {
@@ -26,6 +27,43 @@ router.get("/get/all", async (req, res) => {
       error: err.message,
     });
   }
+});
+
+router.get("/get/all/by-query", async (req, res) => {
+  const page = +req.query.page;
+  const limit = +req.query.limit;
+
+  let results = await getPaginatedData(Doctor, page, limit);
+
+  if (!results) {
+    return res.status(424).send({ message: "No doctors found!" });
+  }
+
+  if (results.hasOwnProperty("error")) {
+    res.status(500).send(results);
+  }
+
+  try {
+    const getPopulatedResult = async (data) => {
+      let result = [];
+
+      for (let i = 0; i < data.length; i++) {
+        result[i] = await data[i].populate({
+          path: "doctorAccount",
+          select: "-_id",
+          populate: { path: "role", select: "-_id" },
+        });
+      }
+
+      return result;
+    };
+
+    results.result = await getPopulatedResult(results.result);
+  } catch (error) {
+    results = results;
+  }
+
+  res.status(200).send(results);
 });
 
 router.get("/get/one", async (req, res) => {
