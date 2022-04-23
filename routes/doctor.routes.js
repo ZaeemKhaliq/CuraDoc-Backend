@@ -29,6 +29,19 @@ router.get("/get/all", async (req, res) => {
   }
 });
 
+router.get("/get/all/count", async (req, res) => {
+  try {
+    const count = await Doctor.countDocuments();
+
+    return res.status(200).send({ doctorsCount: count });
+  } catch (error) {
+    res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: err.message,
+    });
+  }
+});
+
 router.get("/get/all/by-query", async (req, res) => {
   const page = +req.query.page;
   const limit = +req.query.limit;

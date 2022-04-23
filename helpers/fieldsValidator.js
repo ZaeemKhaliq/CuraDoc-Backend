@@ -33,7 +33,7 @@ function validateDoctorFields(data, flag) {
   ];
 
   let isValid = true;
-  const validFieldsForUpdate = validFields.slice(1, validFields.length - 1);
+  const validFieldsForUpdate = validFields.slice(1, validFields.length);
   const validFieldsForVerify = validFields.slice(validFields.length - 1);
 
   suppliedProperties.forEach((item) => {
