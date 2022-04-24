@@ -7,6 +7,7 @@ const { User } = require("../model/user");
 
 const { validateDoctorFields } = require("../helpers/fieldsValidator");
 const getPaginatedData = require("../utils/getPaginatedData");
+const getStructuredFilters = require("../utils/getStructuredFilters.js");
 
 router.get("/get/all", async (req, res) => {
   try {
@@ -29,9 +30,13 @@ router.get("/get/all", async (req, res) => {
   }
 });
 
-router.get("/get/all/count", async (req, res) => {
+router.post("/get/all/count", async (req, res) => {
+  const filters = req.body;
+
+  const structuredFilters = getStructuredFilters(filters);
+
   try {
-    const count = await Doctor.countDocuments();
+    const count = await Doctor.countDocuments(structuredFilters);
 
     return res.status(200).send({ doctorsCount: count });
   } catch (error) {
@@ -42,11 +47,14 @@ router.get("/get/all/count", async (req, res) => {
   }
 });
 
-router.get("/get/all/by-query", async (req, res) => {
+router.post("/get/all/by-query", async (req, res) => {
   const page = +req.query.page;
   const limit = +req.query.limit;
+  const filters = req.body;
 
-  let results = await getPaginatedData(Doctor, page, limit);
+  const structuredFilters = getStructuredFilters(filters);
+
+  let results = await getPaginatedData(Doctor, page, limit, structuredFilters);
 
   if (!results) {
     return res.status(424).send({ message: "No doctors found!" });
@@ -60,18 +68,25 @@ router.get("/get/all/by-query", async (req, res) => {
     const getPopulatedResult = async (data) => {
       let result = [];
 
-      for (let i = 0; i < data.length; i++) {
-        result[i] = await data[i].populate({
-          path: "doctorAccount",
-          select: "-_id",
-          populate: { path: "role", select: "-_id" },
-        });
-      }
+      // for (let i = 0; i < data.length; i++) {
+      //   result[i] = await data[i].populate({
+      //     path: "doctorAccount",
+      //     select: "-_id",
+      //     populate: { path: "role", select: "-_id" },
+      //   });
+      // }
+
+      result = await Doctor.populate(data, {
+        path: "doctorAccount",
+        select: "-_id",
+        populate: { path: "role", select: "-_id" },
+      });
 
       return result;
     };
 
-    results.result = await getPopulatedResult(results.result);
+    results.totalCount = results?.result[0]?.count[0]?.count || 0;
+    results.result = await getPopulatedResult(results.result[0].doctors);
   } catch (error) {
     results = results;
   }
