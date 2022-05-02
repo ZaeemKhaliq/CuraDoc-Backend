@@ -105,7 +105,20 @@ const doctorSchema = new mongoose.Schema({
       type: String,
     },
   },
-
+  ratings: [
+    {
+      patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "patient",
+      },
+      rating: {
+        type: Number,
+      },
+      testimonal: {
+        type: String,
+      },
+    },
+  ],
   currentStatus: {
     type: String,
     uppercase: true,

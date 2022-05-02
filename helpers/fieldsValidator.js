@@ -99,22 +99,20 @@ function validateAppointmentFields(data, flag) {
   const validFields = [
     "patient",
     "doctor",
-    "name",
+    "appointmentId",
     "requestDetails",
     "patientMatter",
-    "appointmentType",
     "patientAddress",
     "patientPhoneNum",
+    "appointmentType",
     "responseDetails",
-    "accepted",
     "message",
     "date",
     "day",
     "time",
-    "active",
-    "completed",
-    "active",
-    "completed",
+    "isPending",
+    "isAccepted",
+    "isCompleted",
     "result",
     "doctorAdvice",
     "prescriptions",
@@ -132,7 +130,7 @@ function validateAppointmentFields(data, flag) {
         isValid = false;
       }
     } else if (flag === "update") {
-      if (!validFields.includes(item, 2)) {
+      if (!validFields.includes(item, 3)) {
         isValid = false;
       }
     } else {

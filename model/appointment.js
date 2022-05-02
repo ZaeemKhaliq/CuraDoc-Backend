@@ -29,7 +29,7 @@ const conversationSchema = new mongoose.Schema(
 
 const appointmentSchema = new mongoose.Schema(
   {
-    name: {
+    appointmentId: {
       type: String,
     },
     patient: {
@@ -62,9 +62,6 @@ const appointmentSchema = new mongoose.Schema(
       },
     },
     responseDetails: {
-      isAccepted: {
-        type: Boolean,
-      },
       message: {
         type: String,
       },
@@ -86,9 +83,13 @@ const appointmentSchema = new mongoose.Schema(
         },
       },
     },
-    isActive: {
+    isPending: {
       type: Boolean,
       default: true,
+    },
+    isAccepted: {
+      type: Boolean,
+      default: false,
     },
     isCompleted: {
       type: Boolean,

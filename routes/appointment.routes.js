@@ -65,7 +65,10 @@ router.get("/get/by-patientId/:id", async (req, res) => {
     const appointments = await Appointment.find({
       patient: patientId,
     }).populate([
-      { path: "patient" },
+      {
+        path: "patient",
+        populate: { path: "patientAccount", select: "-password -role -_id" },
+      },
       {
         path: "doctor",
         populate: { path: "doctorAccount", select: "-password -role -_id" },
@@ -101,7 +104,10 @@ router.get("/get/by-doctorId/:id", async (req, res) => {
         path: "patient",
         populate: { path: "patientAccount", select: "-password -role -_id" },
       },
-      { path: "doctor" },
+      {
+        path: "doctor",
+        populate: { path: "doctorAccount", select: "-password -role -_id" },
+      },
     ]);
 
     if (!appointments) {
@@ -111,6 +117,25 @@ router.get("/get/by-doctorId/:id", async (req, res) => {
     }
 
     return res.status(200).send(appointments);
+  } catch (error) {
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/get/count/by-doctorId/:id", async (req, res) => {
+  const { id: doctorId } = req.params;
+
+  if (!mongoose.isValidObjectId(doctorId)) {
+    return res.status(400).send({ message: "Invalid Appointment ID!" });
+  }
+
+  try {
+    const count = await Appointment.find({ doctor: doctorId }).countDocuments();
+
+    return res.status(200).send({ count });
   } catch (error) {
     return res.status(500).send({
       message: "Some error occurred while processing request!",
