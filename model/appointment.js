@@ -95,6 +95,10 @@ const appointmentSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isRejected: {
+      type: Boolean,
+      default: false,
+    },
     result: {
       doctorAdvice: {
         type: String,
@@ -104,10 +108,10 @@ const appointmentSchema = new mongoose.Schema(
           drugName: {
             type: String,
           },
-          intake: {
+          drugIntake: {
             type: String,
           },
-          duration: {
+          drugDuration: {
             type: String,
           },
         },

@@ -117,8 +117,8 @@ function validateAppointmentFields(data, flag) {
     "doctorAdvice",
     "prescriptions",
     "drugName",
-    "intake",
-    "duration",
+    "drugIntake",
+    "drugDuration",
   ];
 
   const validFieldsForAdd = validFields.slice(0, 8);
