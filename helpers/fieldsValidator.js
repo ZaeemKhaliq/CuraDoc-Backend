@@ -113,6 +113,7 @@ function validateAppointmentFields(data, flag) {
     "isPending",
     "isAccepted",
     "isCompleted",
+    "isRejected",
     "result",
     "doctorAdvice",
     "prescriptions",
