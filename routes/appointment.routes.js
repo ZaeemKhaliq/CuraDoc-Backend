@@ -410,4 +410,25 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
   }
 });
 
+router.delete("/delete-appointment/:id", async (req, res) => {
+  const { id: appointmentId } = req.params;
+
+  if (!mongoose.isValidObjectId(appointmentId)) {
+    return res.status(400).send({ message: "Invalid Appointment ID!" });
+  }
+
+  try {
+    await Appointment.findByIdAndRemove(appointmentId);
+
+    return res
+      .status(200)
+      .send({ message: "Appointment deleted successfully!" });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Some error occurred while processing request!",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = router;
