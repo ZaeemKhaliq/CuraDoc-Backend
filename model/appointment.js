@@ -99,6 +99,9 @@ const appointmentSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    rejectedReason: {
+      type: String,
+    },
     result: {
       doctorAdvice: {
         type: String,
