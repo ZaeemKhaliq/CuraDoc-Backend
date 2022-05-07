@@ -27,6 +27,7 @@ const doctorRoutes = require("./routes/doctor.routes");
 const userRoutes = require("./routes/user.routes");
 const roleRoutes = require("./routes/role.routes");
 const appointmentRoutes = require("./routes/appointment.routes");
+const messagesRoutes = require("./routes/messages.routes");
 
 const API_URL = process.env.API_URL;
 
@@ -35,6 +36,7 @@ app.use(`${API_URL}/doctors`, doctorRoutes);
 app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/roles`, roleRoutes);
 app.use(`${API_URL}/appointments`, appointmentRoutes);
+app.use(`${API_URL}/messages`, messagesRoutes);
 
 //PORT LISTENING
 const PORT = process.env.PORT || 8000;

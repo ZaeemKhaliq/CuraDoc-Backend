@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const { Appointment, Conversation } = require("../model/appointment");
+const ErrorHandler = require("../classes/ErrorHandler");
+
+const { Appointment } = require("../model/appointment");
 const { Doctor } = require("../model/doctor");
 const { Patient } = require("../model/patient");
 
@@ -21,10 +23,7 @@ router.get("/get/all", async (req, res) => {
 
     return res.status(200).send(appoinments);
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request.",
-      error: err.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -46,10 +45,7 @@ router.get("/get/one/:id", async (req, res) => {
 
     return res.status(200).send(appointment);
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -83,10 +79,7 @@ router.get("/get/by-patientId/:id", async (req, res) => {
 
     return res.status(200).send(appointments);
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -118,10 +111,7 @@ router.get("/get/by-doctorId/:id", async (req, res) => {
 
     return res.status(200).send(appointments);
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -137,10 +127,7 @@ router.get("/get/count/by-doctorId/:id", async (req, res) => {
 
     return res.status(200).send({ count });
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -149,7 +136,6 @@ router.post("/add-appointment", async (req, res) => {
   const { body } = req;
 
   const isValid = validateAppointmentFields(body, "add");
-
   if (!isValid) {
     return res.status(400).send({
       message:
@@ -157,11 +143,10 @@ router.post("/add-appointment", async (req, res) => {
     });
   }
 
-  let newAppointment = new Appointment({
-    ...body,
-  });
-
   try {
+    let newAppointment = new Appointment({
+      ...body,
+    });
     const result = await newAppointment.save();
 
     let resp;
@@ -202,10 +187,7 @@ router.post("/add-appointment", async (req, res) => {
       addedAppointment: resp,
     });
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -218,6 +200,14 @@ router.put("/update-appointment/:id", async (req, res) => {
     return res.status(400).send({ message: "Invalid Appointment ID!" });
   }
 
+  const isValid = validateAppointmentFields(body, "update");
+  if (!isValid) {
+    return res.status(400).send({
+      message:
+        "Request declined! Some or all properties in the 'body' are invalid or not supported!",
+    });
+  }
+
   try {
     const appointmentExists = await Appointment.findById(appointmentId);
 
@@ -225,15 +215,6 @@ router.put("/update-appointment/:id", async (req, res) => {
       return res
         .status(404)
         .send({ message: "No appointment with given ID was found!" });
-    }
-
-    const isValid = validateAppointmentFields(body, "update");
-
-    if (!isValid) {
-      return res.status(400).send({
-        message:
-          "Request declined! Some or all properties in the 'body' are invalid or not supported!",
-      });
     }
 
     try {
@@ -275,16 +256,10 @@ router.put("/update-appointment/:id", async (req, res) => {
         updatedAppointment: resp,
       });
     } catch (error) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: error.message,
-      });
+      return ErrorHandler.onCatchResponse({ res, error });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -297,6 +272,14 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
     return res.status(400).send({ message: "Invalid Appointment ID!" });
   }
 
+  const isValid = validateConversationFields(body);
+  if (!isValid) {
+    return res.status(400).send({
+      message:
+        "Request declined! Some or all properties in the 'body' are invalid or not supported!",
+    });
+  }
+
   try {
     const appointmentExists = await Appointment.findById(appointmentId);
 
@@ -306,12 +289,12 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
         .send({ message: "No appointment with given ID was found!" });
     }
 
-    const author = body.conversation[0].author;
+    const authorId = body.conversation[0].author;
     let role;
     let authorExists;
 
     try {
-      authorExists = await Patient.findById(author)
+      authorExists = await Patient.findById(authorId)
         .select("patientAccount")
         .populate({
           path: "patientAccount",
@@ -320,7 +303,7 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
         });
 
       if (!authorExists) {
-        authorExists = await Doctor.findById(author)
+        authorExists = await Doctor.findById(authorId)
           .select("doctorAccount")
           .populate({
             path: "doctorAccount",
@@ -340,33 +323,21 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
       }
 
       if (role.toLowerCase() === "patient") {
-        if (author !== String(appointmentExists.patient)) {
+        if (authorId !== String(appointmentExists.patient)) {
           return res.status(400).send({
             message:
               "The patient ID given does not belong to this appointment!",
           });
         }
       } else if (role.toLowerCase() === "doctor") {
-        if (author !== String(appointmentExists.doctor)) {
+        if (authorId !== String(appointmentExists.doctor)) {
           return res.status(400).send({
             message: "The doctor ID given does not belong to this appointment!",
           });
         }
       }
     } catch (error) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: error.message,
-      });
-    }
-
-    const isValid = validateConversationFields(body);
-
-    if (!isValid) {
-      return res.status(400).send({
-        message:
-          "Request declined! Some or all properties in the 'body' are invalid or not supported!",
-      });
+      return ErrorHandler.onCatchResponse({ res, error });
     }
 
     const { conversation } = body;
@@ -379,7 +350,7 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
       let resp;
 
       try {
-        resp = await Conversation.populate(result.conversation, {
+        resp = await Appointment.populate(result.conversation, {
           path: "author",
           select: "doctorAccount patientAccount -_id",
           populate: {
@@ -397,16 +368,10 @@ router.put("/update-appointment/conversation/:id", async (req, res) => {
         updatedConversation: resp,
       });
     } catch (error) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: error.message,
-      });
+      return ErrorHandler.onCatchResponse({ res, error });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -424,10 +389,7 @@ router.delete("/delete-appointment/:id", async (req, res) => {
       .status(200)
       .send({ message: "Appointment deleted successfully!" });
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 

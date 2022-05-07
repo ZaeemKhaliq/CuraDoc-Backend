@@ -175,8 +175,32 @@ function validateUserFields(data) {
   return isValid;
 }
 
+function validateMessagesFields(data) {
+  const suppliedProperties = getObjectProperties(data);
+
+  const validFields = [
+    "authorRole",
+    "author",
+    "message",
+    "doctor",
+    "patient",
+    "messages",
+  ];
+
+  let isValid = true;
+
+  suppliedProperties.forEach((property) => {
+    if (!validFields.includes(property)) {
+      isValid = false;
+    }
+  });
+
+  return isValid;
+}
+
 exports.validateDoctorFields = validateDoctorFields;
 exports.validatePatientFields = validatePatientFields;
 exports.validateAppointmentFields = validateAppointmentFields;
 exports.validateConversationFields = validateConversationFields;
 exports.validateUserFields = validateUserFields;
+exports.validateMessagesFields = validateMessagesFields;

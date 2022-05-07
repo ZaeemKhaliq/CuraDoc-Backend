@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+const ErrorHandler = require("../classes/ErrorHandler");
+
 const { Patient } = require("../model/patient");
 
 const { validatePatientFields } = require("../helpers/fieldsValidator");
@@ -15,11 +17,8 @@ router.get("/get/all", async (req, res) => {
     }
 
     return res.status(200).send(patients);
-  } catch (err) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request.",
-      error: err.message,
-    });
+  } catch (error) {
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -35,10 +34,7 @@ router.get("/get/one/:id", async (req, res) => {
 
     return res.status(200).send({ patient });
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request.",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -93,10 +89,7 @@ router.put("/update-patient/:id", async (req, res) => {
           updatedPatient: resp,
         });
       } catch (error) {
-        return res.status(500).send({
-          message: "Some error occurred while processing request!",
-          error: error.message,
-        });
+        return ErrorHandler.onCatchResponse({ res, error });
       }
     } else {
       return res.status(400).send({
@@ -105,10 +98,7 @@ router.put("/update-patient/:id", async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -143,10 +133,7 @@ router.delete("/remove-patient/:id", async (req, res) => {
       .status(200)
       .send({ message: "Patient removed successfully!", removedPatient: resp });
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 

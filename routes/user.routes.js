@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const { hashSync, compareSync } = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const ErrorHandler = require("../classes/ErrorHandler");
+
 const { User } = require("../model/user");
 const { Doctor } = require("../model/doctor");
 const { Patient } = require("../model/patient");
@@ -22,10 +24,7 @@ router.get("/get/all", async (req, res) => {
 
     res.status(200).send(users);
   } catch (err) {
-    res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: err.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -53,16 +52,10 @@ router.get("/get/by-role", async (req, res) => {
 
       return res.status(200).send(users);
     } catch (error) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: error.message,
-      });
+      return ErrorHandler.onCatchResponse({ res, error });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -76,20 +69,23 @@ router.get("/get/by-email", async (req, res) => {
     });
   }
 
-  const user = await User.findOne({ email: email })
-    .select("-password")
-    .populate({
-      path: "role",
-      select: "name -_id",
-    });
+  try {
+    const user = await User.findOne({ email: email })
+      .select("-password")
+      .populate({
+        path: "role",
+        select: "name -_id",
+      });
 
-  if (!user) {
-    return res
-      .status(404)
-      .send({ message: "No user with given email found in records!" });
+    if (!user) {
+      return res
+        .status(404)
+        .send({ message: "No user with given email found in records!" });
+    }
+    return res.status(200).send(user);
+  } catch (error) {
+    return ErrorHandler.onCatchResponse({ res, error });
   }
-
-  return res.status(200).send(user);
 });
 
 //USER REGISTRATION API
@@ -117,10 +113,8 @@ router.post("/register", async (req, res) => {
       }
 
       roleObject = roleExists;
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ message: "Server error!", error: err.message });
+    } catch (error) {
+      return ErrorHandler.onCatchResponse({ res, error });
     }
 
     let user = new User({
@@ -132,12 +126,6 @@ router.post("/register", async (req, res) => {
 
     try {
       const result = await user.save();
-
-      if (!result) {
-        return res
-          .status(500)
-          .send({ message: "Some error occurred while creating user!" });
-      }
 
       if (roleObject.name === "Doctor") {
         let newDoctor = new Doctor({
@@ -162,18 +150,19 @@ router.post("/register", async (req, res) => {
             .status(201)
             .send({ message: "User added successfully!", user: finalResp });
         } catch (error) {
-          return res.status(500).send({
+          return ErrorHandler.onCatchResponse({
+            res,
+            error,
             message:
               "User added but some error occurred while adding user as a doctor!",
-            error: error.message,
           });
         }
       } else if (roleObject.name === "Patient") {
-        let newPatient = new Patient({
-          patientAccount: result.id,
-        });
-
         try {
+          let newPatient = new Patien({
+            patientAccount: result.id,
+          });
+
           const patientResult = await newPatient.save();
           let finalResp;
 
@@ -191,24 +180,19 @@ router.post("/register", async (req, res) => {
             .status(201)
             .send({ message: "User added successfully!", user: finalResp });
         } catch (error) {
-          return res.status(500).send({
+          return ErrorHandler.onCatchResponse({
+            res,
+            error,
             message:
               "User added but some error occurred while adding user as a patient!",
-            error: error.message,
           });
         }
       }
-    } catch (err) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: err.message,
-      });
+    } catch (error) {
+      return ErrorHandler.onCatchResponse({ res, error });
     }
-  } catch (err) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: err.message,
-    });
+  } catch (error) {
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -266,10 +250,7 @@ router.post("/login", async (req, res) => {
             },
           });
         } catch (error) {
-          return res.status(500).send({
-            message: "Some error occurred while processing request!",
-            error: error.message,
-          });
+          return ErrorHandler.onCatchResponse({ res, error });
         }
       } else if (user.role.name === "Patient") {
         try {
@@ -285,10 +266,7 @@ router.post("/login", async (req, res) => {
             },
           });
         } catch (error) {
-          return res.status(500).send({
-            message: "Some error occurred while processing request!",
-            error: error.message,
-          });
+          return ErrorHandler.onCatchResponse({ res, error });
         }
       } else if (user.role.name === "Admin") {
         return res.status(200).send({
@@ -300,12 +278,8 @@ router.post("/login", async (req, res) => {
         .status(404)
         .send({ message: "Invalid email and password combination!" });
     }
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: err.message,
-    });
+  } catch (error) {
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -365,16 +339,10 @@ router.put("/update-user/:id", async (req, res) => {
         },
       });
     } catch (error) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: error.message,
-      });
+      return ErrorHandler.onCatchResponse({ res, error });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 

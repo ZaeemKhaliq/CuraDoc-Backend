@@ -155,7 +155,7 @@ conversationSchema.pre("validate", async function (next) {
     });
 
   if (!fetchedRole) {
-    fetchedRole = await await Patient.findById(this.author)
+    fetchedRole = await Patient.findById(this.author)
       .select("patientAccount -_id")
       .populate({
         path: "patientAccount",
@@ -179,4 +179,3 @@ conversationSchema.pre("validate", async function (next) {
 });
 
 exports.Appointment = mongoose.model("appointment", appointmentSchema);
-exports.Conversation = mongoose.model("conversation", conversationSchema);

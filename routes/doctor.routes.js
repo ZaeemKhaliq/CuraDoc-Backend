@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+const ErrorHandler = require("../classes/ErrorHandler");
+
 const { Doctor } = require("../model/doctor");
 const { User } = require("../model/user");
 
@@ -23,10 +25,7 @@ router.get("/get/all", async (req, res) => {
 
     res.status(200).send(doctors);
   } catch (err) {
-    res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: err.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -40,10 +39,7 @@ router.post("/get/all/count", async (req, res) => {
 
     return res.status(200).send({ doctorsCount: count });
   } catch (error) {
-    res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: err.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -94,7 +90,7 @@ router.post("/get/all/by-query", async (req, res) => {
   res.status(200).send(results);
 });
 
-router.get("/get/one", async (req, res) => {
+router.get("/get/one-by-email", async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -105,10 +101,7 @@ router.get("/get/one", async (req, res) => {
 
   Doctor.findByEmail(email, function (err, doctor) {
     if (err) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: err.message,
-      });
+      return ErrorHandler.onCatchResponse({ res, error: err });
     }
 
     if (!doctor) {
@@ -144,7 +137,6 @@ router.post("/add-doctor", async (req, res) => {
   let doctorId = userExists.id;
 
   const isValid = validateDoctorFields(req.body, "add");
-
   if (!isValid) {
     return res.status(400).send({
       message:
@@ -152,12 +144,11 @@ router.post("/add-doctor", async (req, res) => {
     });
   }
 
-  let newDoctor = new Doctor({
-    doctorAccount: doctorId,
-    ...body,
-  });
-
   try {
+    let newDoctor = new Doctor({
+      doctorAccount: doctorId,
+      ...body,
+    });
     await newDoctor.save();
 
     let resp;
@@ -177,11 +168,7 @@ router.post("/add-doctor", async (req, res) => {
       addedDoctor: resp,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -220,10 +207,7 @@ router.put("/update-doctor/:id", async (req, res) => {
           updatedDoctor: result,
         });
       } catch (error) {
-        return res.status(500).send({
-          message: "Some error occurred while processing request!",
-          error: error.message,
-        });
+        return ErrorHandler.onCatchResponse({ res, error });
       }
     } else {
       return res.status(400).send({
@@ -232,10 +216,7 @@ router.put("/update-doctor/:id", async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -277,16 +258,10 @@ router.put("/verify-doctor/:id", async (req, res) => {
         .status(201)
         .send({ message: "Doctor verified successfully!", doctor: result });
     } catch (error) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: error.message,
-      });
+      return ErrorHandler.onCatchResponse({ res, error });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -321,10 +296,7 @@ router.delete("/remove-doctor/:id", async (req, res) => {
       .status(200)
       .send({ message: "Doctor removed successfully!", removedDoctor: resp });
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 

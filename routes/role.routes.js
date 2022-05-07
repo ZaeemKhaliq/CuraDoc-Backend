@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+const ErrorHandler = require("../classes/ErrorHandler");
+
 const { Role } = require("../model/role");
 
 router.get("/get/all", async (req, res) => {
@@ -13,11 +15,8 @@ router.get("/get/all", async (req, res) => {
     }
 
     res.status(200).send(roles);
-  } catch (err) {
-    res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: err.message,
-    });
+  } catch (error) {
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -39,11 +38,8 @@ router.get("/get/one", async (req, res) => {
     }
 
     res.status(200).send(getRole);
-  } catch (err) {
-    res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: err.message,
-    });
+  } catch (error) {
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
@@ -62,16 +58,10 @@ router.post("/add-role", async (req, res) => {
         .status(201)
         .send({ message: "Role added successfully!", addedRole: result });
     } catch (error) {
-      return res.status(500).send({
-        message: "Some error occurred while processing request!",
-        error: error.message,
-      });
+      return ErrorHandler.onCatchResponse({ res, error });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "Some error occurred while processing request!",
-      error: error.message,
-    });
+    return ErrorHandler.onCatchResponse({ res, error });
   }
 });
 
