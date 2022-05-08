@@ -60,6 +60,9 @@ const appointmentSchema = new mongoose.Schema(
       patientPhoneNum: {
         type: String,
       },
+      expectedAppointmentDate: {
+        type: String,
+      },
     },
     responseDetails: {
       message: {
