@@ -96,10 +96,19 @@ function validatePatientFields(data, flag) {
 function validateAppointmentFields(data, flag) {
   const suppliedProperties = getObjectProperties(data);
 
-  const validFields = [
+  const validFieldsForAdd = [
     "patient",
     "doctor",
     "appointmentId",
+    "requestDetails",
+    "patientMatter",
+    "patientAddress",
+    "patientPhoneNum",
+    "appointmentType",
+    "expectedAppointmentDate",
+  ];
+
+  const validFieldsForUpdate = [
     "requestDetails",
     "patientMatter",
     "patientAddress",
@@ -124,7 +133,6 @@ function validateAppointmentFields(data, flag) {
     "drugDuration",
   ];
 
-  const validFieldsForAdd = validFields.slice(0, 8);
   let isValid = true;
 
   suppliedProperties.forEach((item) => {
@@ -133,7 +141,7 @@ function validateAppointmentFields(data, flag) {
         isValid = false;
       }
     } else if (flag === "update") {
-      if (!validFields.includes(item, 3)) {
+      if (!validFieldsForUpdate.includes(item)) {
         isValid = false;
       }
     } else {
