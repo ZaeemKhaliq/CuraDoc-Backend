@@ -105,6 +105,7 @@ function validateAppointmentFields(data, flag) {
     "patientAddress",
     "patientPhoneNum",
     "appointmentType",
+    "expectedAppointmentDate",
     "responseDetails",
     "message",
     "date",
