@@ -23,6 +23,35 @@ const patientSchema = new mongoose.Schema({
       type: String,
     },
   },
+  paymentDetails: {
+    creditCards: [
+      {
+        number: {
+          type: Number,
+          validate: {
+            validator: function (value) {
+              return String(value).length === 16;
+            },
+            message: "The card number should be of 16 characters",
+          },
+        },
+        expiry: {
+          type: String,
+          validate: {
+            validator: function (value) {
+              const regex = /^([0]?[1-9]?|[1]?[1-2])\/[0-9]{2}$/;
+              return !value || regex.test(value);
+            },
+            message:
+              "Invalid format for card's expiry date. The correct format is MM/YY",
+          },
+        },
+        cvc: {
+          type: Number,
+        },
+      },
+    ],
+  },
   appointmentHistory: [
     {
       type: mongoose.Schema.Types.ObjectId,

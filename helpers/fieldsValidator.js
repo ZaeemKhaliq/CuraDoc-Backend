@@ -72,6 +72,11 @@ function validatePatientFields(data, flag) {
     "town",
     "neighbourhood",
     "street",
+    "paymentDetails",
+    "creditCards",
+    "number",
+    "expiry",
+    "cvc",
   ];
 
   let isValid = true;

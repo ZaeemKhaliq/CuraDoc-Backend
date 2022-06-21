@@ -69,6 +69,7 @@ router.put("/update-patient/:id", async (req, res) => {
           updateObject,
           {
             new: true,
+            runValidators: true,
           }
         );
 
