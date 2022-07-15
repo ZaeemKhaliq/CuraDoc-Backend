@@ -73,17 +73,17 @@ const doctorSchema = new mongoose.Schema({
               till: {
                 type: String,
               },
-              type: {
-                type: String,
-                uppercase: true,
-                enum: {
-                  values: ["ONSITE", "ONLINE", "HOMEVISIT"],
-                  message: `{VALUE} is not supported. Accepted values are: 'ONSITE', 'ONLINE' and 'HOMEVISIT'`,
-                },
-              },
               _id: false,
             },
           ],
+          type: {
+            type: String,
+            uppercase: true,
+            enum: {
+              values: ["ONSITE", "ONLINE", "HOMEVISIT"],
+              message: `{VALUE} is not supported. Accepted values are: 'ONSITE', 'ONLINE' and 'HOMEVISIT'`,
+            },
+          },
 
           _id: false,
         },
@@ -96,6 +96,9 @@ const doctorSchema = new mongoose.Schema({
       type: String,
     },
     dateOfBirth: {
+      type: String,
+    },
+    gender: {
       type: String,
     },
     cnicNum: {
