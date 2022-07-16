@@ -159,7 +159,7 @@ router.post("/register", async (req, res) => {
         }
       } else if (roleObject.name === "Patient") {
         try {
-          let newPatient = new Patien({
+          let newPatient = new Patient({
             patientAccount: result.id,
           });
 
