@@ -139,7 +139,7 @@ router.post("/register", async (req, res) => {
           try {
             finalResp = await doctorResult.populate({
               path: "doctorAccount",
-              select: "-password -_id",
+              select: "-password",
               populate: { path: "role", select: "-_id" },
             });
           } catch (error) {
@@ -169,7 +169,7 @@ router.post("/register", async (req, res) => {
           try {
             finalResp = await patientResult.populate({
               path: "patientAccount",
-              select: "-password -_id",
+              select: "-password",
               populate: { path: "role", select: "-_id" },
             });
           } catch (error) {
