@@ -64,6 +64,7 @@ const patientSchema = new mongoose.Schema({
   sendbirdDetails: {
     userId: {
       type: String,
+      default: "",
     },
   },
 });

@@ -137,6 +137,7 @@ const doctorSchema = new mongoose.Schema({
   sendbirdDetails: {
     userId: {
       type: String,
+      default: "",
     },
   },
 });
