@@ -134,6 +134,11 @@ const doctorSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  sendbirdDetails: {
+    userId: {
+      type: String,
+    },
+  },
 });
 
 doctorSchema.set("toJSON", {

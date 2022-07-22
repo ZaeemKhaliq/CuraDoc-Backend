@@ -9,6 +9,7 @@ function validateDoctorFields(data, flag) {
     "qualification",
     "certificate",
     "domainExperience",
+    "introduction",
     "clinics",
     "name",
     "location",
@@ -25,10 +26,16 @@ function validateDoctorFields(data, flag) {
     "personalDetails",
     "profilePicture",
     "dateOfBirth",
+    "gender",
     "cnicNum",
     "phoneNum",
-    "introduction",
+    "ratings",
+    "patient",
+    "rating",
+    "testimonal",
     "currentStatus",
+    "sendbirdDetails",
+    "userId",
     "verified",
   ];
 
@@ -66,6 +73,7 @@ function validatePatientFields(data, flag) {
     "profilePicture",
     "dateOfBirth",
     "cnicNum",
+    "gender",
     "phoneNum",
     "address",
     "city",
@@ -77,6 +85,9 @@ function validatePatientFields(data, flag) {
     "number",
     "expiry",
     "cvc",
+    "appointmentHistory",
+    "sendbirdDetails",
+    "userId",
   ];
 
   let isValid = true;

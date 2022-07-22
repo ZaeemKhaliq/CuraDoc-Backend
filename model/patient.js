@@ -61,6 +61,11 @@ const patientSchema = new mongoose.Schema({
       ref: "appointment",
     },
   ],
+  sendbirdDetails: {
+    userId: {
+      type: String,
+    },
+  },
 });
 
 patientSchema.set("toJSON", {
