@@ -4,52 +4,59 @@ function validateDoctorFields(data, flag) {
   const suppliedProperties = getObjectProperties(data);
 
   const validFields = [
-    "doctorAccount",
-    "professionalDetails",
-    "qualification",
-    "certificate",
-    "domainExperience",
-    "introduction",
-    "clinics",
-    "name",
-    "location",
-    "city",
-    "town",
-    "neighbourhood",
-    "street",
-    "availability",
-    "day",
-    "time",
-    "from",
-    "till",
-    "type",
-    "personalDetails",
-    "profilePicture",
-    "dateOfBirth",
-    "gender",
-    "cnicNum",
-    "phoneNum",
-    "ratings",
-    "patient",
-    "rating",
-    "testimonal",
-    "currentStatus",
-    "sendbirdDetails",
-    "userId",
-    "verified",
+    ["doctorAccount"],
+    [
+      "professionalDetails",
+      "qualification",
+      "certificate",
+      "domainExperience",
+      "introduction",
+      "clinics",
+      "name",
+      "location",
+      "city",
+      "town",
+      "neighbourhood",
+      "street",
+      "availability",
+      "day",
+      "time",
+      "from",
+      "till",
+      "type",
+      "personalDetails",
+      "profilePicture",
+      "dateOfBirth",
+      "gender",
+      "cnicNum",
+      "phoneNum",
+      "ratings",
+      "patient",
+      "rating",
+      "testimonal",
+      "currentStatus",
+    ],
+    ["sendbirdDetails", "userId"],
+    ["verified"],
   ];
 
   let isValid = true;
-  const validFieldsForUpdate = validFields.slice(1, validFields.length);
-  const validFieldsForVerify = validFields.slice(validFields.length - 1);
+  const validFieldsForAdd = validFields.flat();
+  const validFieldsForUpdate = validFields[1];
+  const validFieldsForSendbirdDetailsUpdate = validFields[2];
+  const validFieldsForVerify = validFields[3];
 
   suppliedProperties.forEach((item) => {
     if (flag === "add") {
-      if (!validFields.includes(item)) {
+      if (!validFieldsForAdd.includes(item)) {
         isValid = false;
       }
     } else if (flag === "update") {
       if (!validFieldsForUpdate.includes(item)) {
+        isValid = false;
+      }
+    } else if (flag === "sendbird-update") {
+      if (!validFieldsForSendbirdDetailsUpdate.includes(item)) {
         isValid = false;
       }
     } else if (flag === "verify") {
@@ -68,37 +75,45 @@ function validatePatientFields(data, flag) {
   const suppliedProperties = getObjectProperties(data);
 
   const validFields = [
-    "patientAccount",
-    "personalDetails",
-    "profilePicture",
-    "dateOfBirth",
-    "cnicNum",
-    "gender",
-    "phoneNum",
-    "address",
-    "city",
-    "town",
-    "neighbourhood",
-    "street",
-    "paymentDetails",
-    "creditCards",
-    "number",
-    "expiry",
-    "cvc",
-    "appointmentHistory",
-    "sendbirdDetails",
-    "userId",
+    ["patientAccount"],
+    [
+      "personalDetails",
+      "profilePicture",
+      "dateOfBirth",
+      "cnicNum",
+      "gender",
+      "phoneNum",
+      "address",
+      "city",
+      "town",
+      "neighbourhood",
+      "street",
+      "paymentDetails",
+      "creditCards",
+      "number",
+      "expiry",
+      "cvc",
+      "appointmentHistory",
+    ],
+    ["sendbirdDetails", "userId"],
   ];
 
   let isValid = true;
+  const validFieldsForAdd = validFields.flat();
+  const validFieldsForUpdate = validFields[1];
+  const validFieldsForSendbirdDetailsUpdate = validFields[2];
 
   suppliedProperties.forEach((item) => {
     if (flag === "add") {
-      if (!validFields.includes(item)) {
+      if (!validFieldsForAdd.includes(item)) {
         isValid = false;
       }
     } else if (flag === "update") {
-      if (!validFields.includes(item, 1)) {
+      if (!validFieldsForUpdate.includes(item)) {
+        isValid = false;
+      }
+    } else if (flag === "sendbird-update") {
+      if (!validFieldsForSendbirdDetailsUpdate.includes(item)) {
         isValid = false;
       }
     } else {

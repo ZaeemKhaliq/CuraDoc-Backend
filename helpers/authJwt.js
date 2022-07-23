@@ -9,7 +9,11 @@ function authJwt() {
     algorithms: ["HS256"],
     isRevoked,
   }).unless({
-    path: [`${API_URL}/users/login`, `${API_URL}/users/register`],
+    path: [
+      `${API_URL}/users/login`,
+      `${API_URL}/users/register`,
+      /^\/api\/v1\/patients\/update-sendbird-details\/.*$/,
+    ],
   });
 }
 

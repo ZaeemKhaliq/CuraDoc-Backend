@@ -103,6 +103,54 @@ router.put("/update-patient/:id", async (req, res) => {
   }
 });
 
+router.put("/update-sendbird-details/:id", async (req, res) => {
+  const { id: patientId } = req.params;
+
+  if (!mongoose.isValidObjectId(patientId)) {
+    return res.status(400).send({ message: "Invalid Patient ID!" });
+  }
+
+  try {
+    const patientExists = await Patient.findById(patientId);
+
+    if (!patientExists) {
+      return res
+        .status(404)
+        .send({ message: "Patient with this ID not found!" });
+    }
+
+    const isValid = validatePatientFields(req.body, "sendbird-update");
+
+    if (!isValid) {
+      return res.status(400).send({
+        message:
+          "Request declined! Some or all properties in the 'body' are invalid or not supported!",
+      });
+    }
+
+    let { body } = req;
+
+    const updateObject = {
+      ...body,
+    };
+
+    try {
+      const result = await Patient.findByIdAndUpdate(patientId, updateObject, {
+        new: true,
+      }).select("-patientAccount");
+
+      return res.status(201).send({
+        message: "Patient updated successfully!",
+        updatedPatient: result,
+      });
+    } catch (error) {
+      return ErrorHandler.onCatchResponse({ res, error });
+    }
+  } catch (error) {
+    return ErrorHandler.onCatchResponse({ res, error });
+  }
+});
+
 router.delete("/remove-patient/:id", async (req, res) => {
   const patientId = req.params.id;
 
