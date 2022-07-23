@@ -13,6 +13,7 @@ function authJwt() {
       `${API_URL}/users/login`,
       `${API_URL}/users/register`,
       /^\/api\/v1\/patients\/update-sendbird-details\/.*$/,
+      /^\/api\/v1\/doctors\/update-sendbird-details\/.*$/,
     ],
   });
 }
