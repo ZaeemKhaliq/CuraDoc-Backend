@@ -24,7 +24,7 @@ router.get("/get/all", async (req, res) => {
     }
 
     res.status(200).send(doctors);
-  } catch (err) {
+  } catch (error) {
     return ErrorHandler.onCatchResponse({ res, error });
   }
 });
