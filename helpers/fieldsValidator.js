@@ -33,7 +33,7 @@ function validateDoctorFields(data, flag) {
       "ratings",
       "patient",
       "rating",
-      "testimonal",
+      "testimonial",
       "currentStatus",
     ],
     ["sendbirdDetails", "userId"],
@@ -162,6 +162,9 @@ function validateAppointmentFields(data, flag) {
     "drugName",
     "drugIntake",
     "drugDuration",
+    "patientRating",
+    "rating",
+    "testimonial",
   ];
 
   let isValid = true;

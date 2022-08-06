@@ -122,6 +122,14 @@ const appointmentSchema = new mongoose.Schema(
           },
         },
       ],
+      patientRating: {
+        rating: {
+          type: Number,
+        },
+        testimonial: {
+          type: String,
+        },
+      },
     },
     conversation: [conversationSchema],
   },

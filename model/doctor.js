@@ -117,7 +117,7 @@ const doctorSchema = new mongoose.Schema({
       rating: {
         type: Number,
       },
-      testimonal: {
+      testimonial: {
         type: String,
       },
     },
