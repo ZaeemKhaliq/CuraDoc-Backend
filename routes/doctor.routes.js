@@ -13,11 +13,24 @@ const getStructuredFilters = require("../utils/getStructuredFilters.js");
 
 router.get("/get/all", async (req, res) => {
   try {
-    const doctors = await Doctor.find().populate({
-      path: "doctorAccount",
-      select: "-_id",
-      populate: { path: "role", select: "-_id" },
-    });
+    const doctors = await Doctor.find().populate([
+      {
+        path: "doctorAccount",
+        select: "-_id",
+        populate: { path: "role", select: "-_id" },
+      },
+      {
+        path: "ratings",
+        populate: {
+          path: "patient",
+          select: "patientAccount -_id",
+          populate: {
+            path: "patientAccount",
+            select: "name -_id",
+          },
+        },
+      },
+    ]);
 
     if (!doctors) {
       return res.status(424).send({ message: "No doctors found!" });
