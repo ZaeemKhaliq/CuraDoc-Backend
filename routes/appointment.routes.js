@@ -35,7 +35,16 @@ router.get("/get/one/:id", async (req, res) => {
   }
 
   try {
-    const appointment = await Appointment.findById(appointmentId);
+    const appointment = await Appointment.findById(appointmentId).populate([
+      {
+        path: "patient",
+        populate: { path: "patientAccount", select: "-password -role -_id" },
+      },
+      {
+        path: "doctor",
+        populate: { path: "doctorAccount", select: "-password -role -_id" },
+      },
+    ]);
 
     if (!appointment) {
       return res
