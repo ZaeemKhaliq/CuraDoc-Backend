@@ -120,6 +120,7 @@ const doctorSchema = new mongoose.Schema({
       testimonial: {
         type: String,
       },
+      _id: false,
     },
   ],
   currentStatus: {

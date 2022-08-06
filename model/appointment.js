@@ -120,6 +120,7 @@ const appointmentSchema = new mongoose.Schema(
           drugDuration: {
             type: String,
           },
+          _id: false,
         },
       ],
       patientRating: {
