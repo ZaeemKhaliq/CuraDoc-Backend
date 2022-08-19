@@ -88,6 +88,9 @@ const doctorSchema = new mongoose.Schema({
           _id: false,
         },
       ],
+      appointmentFee: {
+        type: Number,
+      },
       _id: false,
     },
   ],

@@ -24,6 +24,7 @@ function validateDoctorFields(data, flag) {
       "from",
       "till",
       "type",
+      "appointmentFee",
       "personalDetails",
       "profilePicture",
       "dateOfBirth",
@@ -137,6 +138,9 @@ function validateAppointmentFields(data, flag) {
     "patientPhoneNum",
     "appointmentType",
     "expectedAppointmentDate",
+    "payment",
+    "appointmentFee",
+    "isPaid",
   ];
 
   const validFieldsForUpdate = [
@@ -165,6 +169,9 @@ function validateAppointmentFields(data, flag) {
     "patientRating",
     "rating",
     "testimonial",
+    "payment",
+    "appointmentFee",
+    "isPaid",
   ];
 
   let isValid = true;

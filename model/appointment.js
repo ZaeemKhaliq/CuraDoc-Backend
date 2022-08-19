@@ -86,6 +86,15 @@ const appointmentSchema = new mongoose.Schema(
         },
       },
     },
+    payment: {
+      appointmentFee: {
+        type: Number,
+      },
+      isPaid: {
+        type: Boolean,
+        default: false,
+      },
+    },
     isPending: {
       type: Boolean,
       default: true,
