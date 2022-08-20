@@ -28,6 +28,7 @@ const userRoutes = require("./routes/user.routes");
 const roleRoutes = require("./routes/role.routes");
 const appointmentRoutes = require("./routes/appointment.routes");
 const messagesRoutes = require("./routes/messages.routes");
+const stripeRoutes = require("./routes/payment.routes");
 
 const API_URL = process.env.API_URL;
 
@@ -37,6 +38,7 @@ app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/roles`, roleRoutes);
 app.use(`${API_URL}/appointments`, appointmentRoutes);
 app.use(`${API_URL}/messages`, messagesRoutes);
+app.use(`${API_URL}/payments`, stripeRoutes);
 
 //PORT LISTENING
 const PORT = process.env.PORT || 8000;
