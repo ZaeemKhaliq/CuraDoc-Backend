@@ -38,11 +38,11 @@ router.get("/get/one/:id", async (req, res) => {
     const appointment = await Appointment.findById(appointmentId).populate([
       {
         path: "patient",
-        populate: { path: "patientAccount", select: "-password -role -_id" },
+        populate: { path: "patientAccount", select: "-password -role" },
       },
       {
         path: "doctor",
-        populate: { path: "doctorAccount", select: "-password -role -_id" },
+        populate: { path: "doctorAccount", select: "-password -role" },
       },
     ]);
 
@@ -72,11 +72,11 @@ router.get("/get/by-patientId/:id", async (req, res) => {
     }).populate([
       {
         path: "patient",
-        populate: { path: "patientAccount", select: "-password -role -_id" },
+        populate: { path: "patientAccount", select: "-password -role" },
       },
       {
         path: "doctor",
-        populate: { path: "doctorAccount", select: "-password -role -_id" },
+        populate: { path: "doctorAccount", select: "-password -role" },
       },
     ]);
 
@@ -104,11 +104,11 @@ router.get("/get/by-doctorId/:id", async (req, res) => {
     const appointments = await Appointment.find({ doctor: doctorId }).populate([
       {
         path: "patient",
-        populate: { path: "patientAccount", select: "-password -role -_id" },
+        populate: { path: "patientAccount", select: "-password -role" },
       },
       {
         path: "doctor",
-        populate: { path: "doctorAccount", select: "-password -role -_id" },
+        populate: { path: "doctorAccount", select: "-password -role" },
       },
     ]);
 
