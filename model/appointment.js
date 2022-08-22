@@ -115,6 +115,9 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
     },
     result: {
+      dateCompleted: {
+        type: String,
+      },
       doctorAdvice: {
         type: String,
       },

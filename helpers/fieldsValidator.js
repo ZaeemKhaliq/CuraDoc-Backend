@@ -161,6 +161,7 @@ function validateAppointmentFields(data, flag) {
     "isRejected",
     "rejectedReason",
     "result",
+    "dateCompleted",
     "doctorAdvice",
     "prescriptions",
     "drugName",
