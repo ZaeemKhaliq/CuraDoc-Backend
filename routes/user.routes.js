@@ -256,7 +256,9 @@ router.post("/login", async (req, res) => {
         try {
           const patientExists = await Patient.findOne({
             patientAccount: user.id,
-          }).select("-patientAccount");
+          })
+            .select("-patientAccount")
+            .populate("appointmentHistory");
 
           return res.status(200).send({
             ...responseObject,
