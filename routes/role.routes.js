@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const ErrorHandler = require("../classes/ErrorHandler");
-
 const { Role } = require("../model/role");
+
+const ErrorHandler = require("../classes/ErrorHandler");
 
 router.get("/get/all", async (req, res) => {
   try {

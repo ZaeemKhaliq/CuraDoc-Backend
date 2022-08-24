@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const ErrorHandler = require("../classes/ErrorHandler");
-
 const { Appointment } = require("../model/appointment");
 const { Doctor } = require("../model/doctor");
 const { Patient } = require("../model/patient");
+
+const ErrorHandler = require("../classes/ErrorHandler");
 
 const {
   validateAppointmentFields,

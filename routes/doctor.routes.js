@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const ErrorHandler = require("../classes/ErrorHandler");
-
 const { Doctor } = require("../model/doctor");
 const { User } = require("../model/user");
 
+const ErrorHandler = require("../classes/ErrorHandler");
+
 const { validateDoctorFields } = require("../helpers/fieldsValidator");
+
 const getPaginatedData = require("../utils/getPaginatedData");
 const getStructuredFilters = require("../utils/getStructuredFilters.js");
 

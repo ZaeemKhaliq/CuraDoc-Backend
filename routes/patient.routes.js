@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const ErrorHandler = require("../classes/ErrorHandler");
-
 const { Patient } = require("../model/patient");
+
+const ErrorHandler = require("../classes/ErrorHandler");
 
 const { validatePatientFields } = require("../helpers/fieldsValidator");
 
@@ -24,6 +24,10 @@ router.get("/get/all", async (req, res) => {
 
 router.get("/get/one/:id", async (req, res) => {
   const patientId = req.params.id;
+
+  if (!mongoose.isValidObjectId(patientId)) {
+    return res.status(400).send({ message: "Invalid Patient ID!" });
+  }
 
   try {
     const patient = Patient.findById(patientId);

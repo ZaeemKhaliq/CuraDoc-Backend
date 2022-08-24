@@ -36,6 +36,11 @@ function validateDoctorFields(data, flag) {
       "rating",
       "testimonial",
       "currentStatus",
+      "reports",
+      "patient",
+      "problemType",
+      "problemDescription",
+      "fileAsProof",
     ],
     ["sendbirdDetails", "userId"],
     ["verified"],
@@ -95,6 +100,11 @@ function validatePatientFields(data, flag) {
       "expiry",
       "cvc",
       "appointmentHistory",
+      "reports",
+      "doctor",
+      "problemType",
+      "problemDescription",
+      "fileAsProof",
     ],
     ["sendbirdDetails", "userId"],
   ];
@@ -249,9 +259,41 @@ function validateMessagesFields(data) {
   return isValid;
 }
 
+function validateReportFields(data, flag) {
+  const suppliedProperties = getObjectProperties(data);
+
+  const validFields = [
+    ["doctor", "patient"],
+    ["openedBy", "problemType", "problemDescription", "fileAsProof"],
+  ];
+
+  let isValid = true;
+  const validFieldsForAdd = validFields.flat();
+  const validFieldsForUpdate = validFields[1];
+
+  suppliedProperties.forEach((property) => {
+    if (flag === "add") {
+      if (!validFieldsForAdd.includes(property)) {
+        isValid = false;
+      }
+    } else if (flag === "update") {
+      if (!validFieldsForUpdate.includes(property)) {
+        isValid = false;
+      }
+    } else {
+      isValid = false;
+    }
+
+    return isValid;
+  });
+
+  return isValid;
+}
+
 exports.validateDoctorFields = validateDoctorFields;
 exports.validatePatientFields = validatePatientFields;
 exports.validateAppointmentFields = validateAppointmentFields;
 exports.validateConversationFields = validateConversationFields;
 exports.validateUserFields = validateUserFields;
 exports.validateMessagesFields = validateMessagesFields;
+exports.validateReportFields = validateReportFields;

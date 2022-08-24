@@ -13,6 +13,25 @@ const domainExperienceValues = [
     ),
 ];
 
+const reportSchema = new mongoose.Schema(
+  {
+    patient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "patient",
+    },
+    problemType: {
+      type: String,
+    },
+    problemDescription: {
+      type: String,
+    },
+    fileAsProof: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
+
 const doctorSchema = new mongoose.Schema({
   doctorAccount: {
     type: mongoose.Schema.Types.ObjectId,
@@ -143,6 +162,16 @@ const doctorSchema = new mongoose.Schema({
       type: String,
       default: "",
     },
+  },
+  reports: [reportSchema],
+});
+
+reportSchema.set("toJSON", {
+  virtuals: true,
+  transform(doc, ret) {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
   },
 });
 

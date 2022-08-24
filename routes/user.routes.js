@@ -4,12 +4,12 @@ const mongoose = require("mongoose");
 const { hashSync, compareSync } = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const ErrorHandler = require("../classes/ErrorHandler");
-
 const { User } = require("../model/user");
 const { Doctor } = require("../model/doctor");
 const { Patient } = require("../model/patient");
 const { Role } = require("../model/role");
+
+const ErrorHandler = require("../classes/ErrorHandler");
 
 const { validateUserFields } = require("../helpers/fieldsValidator");
 

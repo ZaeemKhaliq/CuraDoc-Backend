@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const { validateMessagesFields } = require("../helpers/fieldsValidator");
-
-const ErrorHandler = require("../classes/ErrorHandler");
-
 const { Message } = require("../model/messages.js");
 const { Doctor } = require("../model/doctor");
 const { Patient } = require("../model/patient");
+
+const ErrorHandler = require("../classes/ErrorHandler");
+
+const { validateMessagesFields } = require("../helpers/fieldsValidator");
 
 router.get("/get/all", async (req, res) => {
   try {
