@@ -240,7 +240,19 @@ router.post("/login", async (req, res) => {
         try {
           const doctorExists = await Doctor.findOne({
             doctorAccount: user.id,
-          }).select("-doctorAccount");
+          })
+            .select("-doctorAccount")
+            .populate({
+              path: "reports",
+              populate: {
+                path: "patient",
+                select: "patientAccount",
+                populate: {
+                  path: "patientAccount",
+                  select: "name email",
+                },
+              },
+            });
 
           return res.status(200).send({
             ...responseObject,
